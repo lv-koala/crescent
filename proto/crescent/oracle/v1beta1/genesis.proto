@@ -1,0 +1,70 @@
+syntax = "proto3";
+package crescent.oracle.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "crescent/oracle/v1beta1/oracle.proto";
+
+option go_package = "github.com/crescent-network/crescent/v5/x/oracle/types";
+
+option (gogoproto.goproto_getters_all) = false;
+
+// GenesisState defines the oracle module's genesis state.
+message GenesisState {
+  Params                       params         = 1 [(gogoproto.nullable) = false];
+  repeated MissCounter         miss_counters          = 3 [(gogoproto.nullable) = false];
+  repeated PricePrevote price_prevotes = 4 
+    [  (gogoproto.castrepeated) = "PricePrevotes",  (gogoproto.nullable)     = false  ];
+  repeated PriceVote    price_votes    = 5 
+   [  (gogoproto.castrepeated) = "PriceVotes",  (gogoproto.nullable)     = false  ];  
+  repeated OraclePrice               price_oracle           = 6 
+  [  (gogoproto.castrepeated) = "OraclePrices",  (gogoproto.nullable)     = false  ];    
+  repeated LsvFeeder           lsv_feeder = 7
+  [  (gogoproto.castrepeated) = "LsvFeeders",  (gogoproto.nullable)     = false  ];    
+}
+
+// MissCounter defines an miss counter and validator address pair used in
+// oracle module's genesis state
+message MissCounter {
+  string feeder       = 1;
+  uint64 miss_counter = 2;
+}
+
+// Price is an instance of a price "stamp"
+// block_num is the block number of the block in which the price was prevoted
+message OraclePrice {
+  int64 block_num    = 1;
+  string ticker = 2;
+  string usd_price    = 3 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable)   = false];
+}
+
+message PricePrevote {
+  string hash   = 1;
+  string feeder = 2;
+  int64 height = 3;
+}
+
+message PriceVote {
+  int64                      height              = 1;
+  uint64                     valid_tuple_count   = 2;
+  string                     salt                = 3;
+  string                     feeder              = 4;
+  repeated PriceTuple  price_tuple = 5 [
+    (gogoproto.castrepeated) = "PriceTuples",
+    (gogoproto.nullable)     = false
+  ];
+}
+
+message ValidVotes {
+  int64                     height              = 1;
+  int64                     valid_tuple_count              = 2;
+  repeated ValidPriceTuple       valid_tuple = 3 [
+    (gogoproto.castrepeated) = "ValidPriceTuples",
+    (gogoproto.nullable)     = false
+  ];
+}
+
+message LsvFeeder {
+  string                     lsv_addr= 1;
+  string                     feeder_addr              = 2;
+  int64  update_height = 3;
+}

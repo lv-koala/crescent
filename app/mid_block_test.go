@@ -9,6 +9,7 @@ import (
 
 	exchangetypes "github.com/crescent-network/crescent/v5/x/exchange/types"
 	liquidstakingtypes "github.com/crescent-network/crescent/v5/x/liquidstaking/types"
+	oracletypes "github.com/crescent-network/crescent/v5/x/oracle/types"
 )
 
 func TestSplitMidBlockTxs(t *testing.T) {
@@ -25,9 +26,9 @@ func TestSplitMidBlockTxs(t *testing.T) {
 	}
 
 	singleNormalTx := getTx(&banktypes.MsgSend{})
-	multipleNormalTx := getTx(&liquidstakingtypes.MsgLiquidStake{}, &banktypes.MsgSend{})
+	multipleNormalTx := getTx(&liquidstakingtypes.MsgLiquidStake{}, &banktypes.MsgSend{}, &oracletypes.MsgPricesPrevote{})
 	singleMidBlockTx := getTx(&exchangetypes.MsgPlaceBatchLimitOrder{})
-	multipleMidBlockTx := getTx(&exchangetypes.MsgPlaceBatchLimitOrder{}, &exchangetypes.MsgPlaceMMBatchLimitOrder{})
+	multipleMidBlockTx := getTx(&exchangetypes.MsgPlaceBatchLimitOrder{}, &exchangetypes.MsgPlaceMMBatchLimitOrder{}, &oracletypes.MsgPricesVote{})
 	normalWithMidBlockTx := getTx(&banktypes.MsgSend{}, &exchangetypes.MsgPlaceBatchLimitOrder{})
 	midBlockWithNormalTx := getTx(&exchangetypes.MsgPlaceBatchLimitOrder{}, &banktypes.MsgSend{})
 

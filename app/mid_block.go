@@ -5,6 +5,7 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 
 	exchangetypes "github.com/crescent-network/crescent/v5/x/exchange/types"
+	oracletypes "github.com/crescent-network/crescent/v5/x/oracle/types"
 )
 
 func (app *App) MidBlocker(ctx sdk.Context, req abci.RequestMidBlock) abci.ResponseMidBlock {
@@ -55,7 +56,8 @@ func IsMidBlockTx(tx sdk.Tx) bool {
 		switch msg.(type) {
 		case *exchangetypes.MsgPlaceBatchLimitOrder,
 			*exchangetypes.MsgPlaceMMBatchLimitOrder,
-			*exchangetypes.MsgCancelOrder:
+			*exchangetypes.MsgCancelOrder,
+			*oracletypes.MsgPricesVote:
 		default:
 			return false
 		}

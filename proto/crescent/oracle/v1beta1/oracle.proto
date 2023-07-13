@@ -1,0 +1,52 @@
+syntax = "proto3";
+package crescent.oracle.v1beta1;
+
+import "gogoproto/gogo.proto";
+//import "google/protobuf/timestamp.proto";
+//import "google/protobuf/duration.proto";
+//import "cosmos/base/v1beta1/coin.proto";
+
+option go_package                      = "github.com/crescent-network/crescent/v5/x/oracle/types";
+option (gogoproto.goproto_getters_all) = false;
+
+// Params defines the parameters for the liquidity module.
+message Params {
+
+  // minimum number of votes to decide a price
+  uint64 vote_min_tx = 1;
+
+  // distribution rate of reward from the module account
+  uint64 reward_distribution_rate = 2;
+
+  uint64 reward_distribution_period = 3;
+
+  // list of whitelisted feeder addresses
+  repeated string whitelist_feeders = 4;
+  
+  // list of delegate_account
+  // The delegate Account is changed by gov, and delegate account can add a new symbol.
+  repeated string delegate_accounts = 5;
+
+  // list of acceptable ticker. uppercase and _ only
+  repeated string accept_tickers = 6;
+
+  // threshold for acceptable seconds between the current block time and the timestamp of the price
+  // should be more than 2 block. check at msg handler
+  uint64 acceptable_seconds = 7;
+}
+
+
+// PriceTuple
+message PriceTuple {
+  uint64 source_exchange_id = 1;
+  //google.protobuf.Timestamp        timestamp           = 2 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
+  uint64        timestamp           = 2;
+  string ticker             = 3;
+  string usd_price          = 4 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable)   = false];
+}
+
+message ValidPriceTuple {
+  uint64 source_exchange_id = 1;
+  string feeder             = 2;
+  string usd_price          = 3 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable)   = false];
+}

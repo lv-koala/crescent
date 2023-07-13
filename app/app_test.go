@@ -46,6 +46,7 @@ import (
 	"github.com/crescent-network/crescent/v5/x/lpfarm"
 	"github.com/crescent-network/crescent/v5/x/marketmaker"
 	"github.com/crescent-network/crescent/v5/x/mint"
+	"github.com/crescent-network/crescent/v5/x/oracle"
 )
 
 func TestSimAppExportAndBlockedAddrs(t *testing.T) {
@@ -202,6 +203,7 @@ func TestRunMigrations(t *testing.T) {
 					"lpfarm":             lpfarm.AppModule{}.ConsensusVersion(),
 					"exchange":           exchange.AppModule{}.ConsensusVersion(),
 					"amm":                amm.AppModule{}.ConsensusVersion(),
+					"oracle":             oracle.AppModule{}.ConsensusVersion(),
 					"ibc":                ibc.AppModule{}.ConsensusVersion(),
 					"transfer":           transfer.AppModule{}.ConsensusVersion(),
 					"interchainaccounts": ica.AppModule{}.ConsensusVersion(),
@@ -267,6 +269,7 @@ func TestInitGenesisOnMigration(t *testing.T) {
 			"lpfarm":        lpfarm.AppModule{}.ConsensusVersion(),
 			"exchange":      exchange.AppModule{}.ConsensusVersion(),
 			"amm":           amm.AppModule{}.ConsensusVersion(),
+			"oracle":        oracle.AppModule{}.ConsensusVersion(),
 			"ibc":           ibc.AppModule{}.ConsensusVersion(),
 			"transfer":      transfer.AppModule{}.ConsensusVersion(),
 		},

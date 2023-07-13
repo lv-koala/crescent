@@ -1,0 +1,16 @@
+syntax = "proto3";
+package crescent.oracle.v1beta1;
+
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/crescent-network/crescent/v5/x/oracle/types";
+option (gogoproto.goproto_getters_all) = false;
+
+// EventSymbolRate is emitted on exchange rate update
+message EventSymbolRate {
+  string symbol_denom = 1;
+  // Exchange rate (based to USD)
+  string rate = 2 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
+  repeated string feeders = 3;
+}

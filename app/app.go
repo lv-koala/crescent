@@ -78,6 +78,9 @@ import (
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+	"github.com/crescent-network/crescent/v5/x/oracle"
+	oraclekeeper "github.com/crescent-network/crescent/v5/x/oracle/keeper"
+	oracletypes "github.com/crescent-network/crescent/v5/x/oracle/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"
@@ -207,6 +210,7 @@ var (
 		marker.AppModuleBasic{},
 		exchange.AppModuleBasic{},
 		amm.AppModuleBasic{},
+		oracle.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -229,6 +233,7 @@ var (
 		exchangetypes.ModuleName:       nil,
 		ammtypes.ModuleName:            {authtypes.Minter, authtypes.Burner},
 		icatypes.ModuleName:            nil,
+		oracletypes.ModuleName:         {authtypes.Burner},
 	}
 )
 
@@ -288,6 +293,7 @@ type App struct {
 	MarkerKeeper        markerkeeper.Keeper
 	ExchangeKeeper      exchangekeeper.Keeper
 	AMMKeeper           ammkeeper.Keeper
+	OracleKeeper        oraclekeeper.Keeper
 
 	// scoped keepers
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
@@ -368,10 +374,12 @@ func NewApp(
 		markertypes.StoreKey,
 		exchangetypes.StoreKey,
 		ammtypes.StoreKey,
+		oracletypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(
 		paramstypes.TStoreKey,
 		exchangetypes.TStoreKey,
+		oracletypes.TStoreKey,
 	)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
@@ -570,6 +578,14 @@ func NewApp(
 		app.BankKeeper,
 		app.AMMKeeper,
 	)
+	app.OracleKeeper = oraclekeeper.NewKeeper(
+		appCodec,
+		keys[oracletypes.StoreKey],
+		tkeys[oracletypes.TStoreKey],
+		app.GetSubspace(oracletypes.ModuleName),
+		app.AccountKeeper,
+		app.BankKeeper,
+	)
 
 	// register the proposal types
 	govRouter := govtypes.NewRouter()
@@ -692,6 +708,7 @@ func NewApp(
 		marker.NewAppModule(appCodec, app.MarkerKeeper),
 		exchange.NewAppModule(appCodec, app.ExchangeKeeper, app.AccountKeeper, app.BankKeeper),
 		amm.NewAppModule(appCodec, app.AMMKeeper, app.AccountKeeper, app.BankKeeper, app.ExchangeKeeper),
+		oracle.NewAppModule(appCodec, app.OracleKeeper, app.AccountKeeper, app.BankKeeper),
 		app.transferModule,
 		app.icaModule,
 	)
@@ -733,9 +750,11 @@ func NewApp(
 		icatypes.ModuleName,
 		markertypes.ModuleName,
 		exchangetypes.ModuleName,
+		oracletypes.ModuleName,
 	)
 
 	app.mm.SetOrderMidBlockers(
+		oracletypes.ModuleName,
 		exchangetypes.ModuleName,
 	)
 
@@ -772,6 +791,7 @@ func NewApp(
 		icatypes.ModuleName,
 		exchangetypes.ModuleName,
 		ammtypes.ModuleName,
+		oracletypes.ModuleName,
 
 		markertypes.ModuleName,
 	)
@@ -807,6 +827,7 @@ func NewApp(
 		markertypes.ModuleName,
 		exchangetypes.ModuleName,
 		ammtypes.ModuleName,
+		oracletypes.ModuleName,
 
 		// empty logic modules
 		paramstypes.ModuleName,
@@ -1069,6 +1090,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(markertypes.ModuleName)
 	paramsKeeper.Subspace(exchangetypes.ModuleName)
 	paramsKeeper.Subspace(ammtypes.ModuleName)
+	paramsKeeper.Subspace(oracletypes.ModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 
 	return paramsKeeper

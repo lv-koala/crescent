@@ -1,0 +1,45 @@
+syntax = "proto3";
+package crescent.oracle.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "crescent/oracle/v1beta1/oracle.proto";
+
+option go_package                      = "github.com/crescent-network/crescent/v5/x/oracle/types";
+option (gogoproto.goproto_getters_all) = false;
+
+service Msg {
+  rpc PricesPrevote(MsgPricesPrevote) returns (MsgPricesPrevoteResponse);
+  rpc PricesVote(MsgPricesVote) returns (MsgPricesVoteResponse);
+  rpc LsvFeederUpdate(MsgLsvFeederUpdate) returns (MsgLsvFeederUpdateResponse);
+  rpc AddNewTicker(MsgAddNewTicker) returns (MsgAddNewTickerResponse);
+}
+
+message MsgPricesPrevote {
+  string hash   = 1;
+  string feeder = 2;
+}
+
+message MsgPricesPrevoteResponse {}
+
+message MsgPricesVote {
+  string                     salt                = 1;
+  string                     feeder              = 2;
+  string       price_tuples = 3;
+  // repeated PricesTuple exchange_rate_tuple = 3;
+}
+
+message MsgPricesVoteResponse {}
+
+message MsgLsvFeederUpdate {
+  string     lsvAccAddr = 1;
+  string     feeder              = 2;
+}
+
+message MsgLsvFeederUpdateResponse {}
+
+message MsgAddNewTicker {
+  string       delegateAddress   =1;
+  string        ticker              = 2;
+}
+
+message MsgAddNewTickerResponse {}
