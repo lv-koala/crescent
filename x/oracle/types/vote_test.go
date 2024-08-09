@@ -1,42 +1,52 @@
 package types_test
 
-/*
-func TestPrevoteValidate(t *testing.T) {
+import (
+	"fmt"
+	"testing"
+
+	"github.com/stretchr/testify/require"
+
+	"github.com/crescent-network/crescent/v5/x/oracle/types"
+)
+
+func TestVote_ParsePriceTuples(t *testing.T) {
 	for _, tc := range []struct {
 		name        string
-		malleate    func(*types.PricesPrevote)
+		malleate    func(voteStr *string)
 		expectedErr string
 	}{
 		{
-			"invalid feeder",
-			func(pv *types.PricesPrevote) {
-				pv.Feeder = ""
-			},
+			"valid",
+			func(voteStr *string) {},
 			"",
 		},
 		{
-			"invalid hash",
-			func(pv *types.PricesPrevote) {
-				pv.Hash = ""
+			"invalid format",
+			func(voteStr *string) {
+				*voteStr = "1:ETH:1810.4,4:1682899198:ETH:1808.5,1:1682899198:BTC:28110.45,4:1682899198:BTC:28108.25"
 			},
-			"pool id must not be 0",
+			"invalid sender address: decoding bech32 failed: invalid separator index -1: invalid address",
 		},
 		{
-			"invalid height",
-			func(pv *types.PricesPrevote) {
-				pv.Hash = ""
+			"empty exchange id",
+			func(voteStr *string) {
+				*voteStr = "1:1682899198:ETH:1810.4,4:1682899198:ETH:1808.5,:1682899198:BTC:283310.45,4:1682899198:BTC:28108.25"
 			},
-			"pool id must not be 0",
+			"invalid sender address: decoding bech32 failed: invalid separator index -1: invalid address",
+		},
+		{
+			"invalid timestamp",
+			func(voteStr *string) {
+				*voteStr = "1:2682899198:ETH:1810.4,4:2682899198:ETH:1808.5,1:1682899198:BTC:28110.45,4:1682899198:BTC:28108.25"
+			},
+			"invalid sender address: decoding bech32 failed: invalid separator index -1: invalid address",
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			pv := types.PricesPrevote(
-				"0cf33fb528b388660c3a42c3f3250e983395290b75fef255050fb5bc48a6025f",
-				"cre1zaavvzxez0elundtn32qnk9lkm8kmcszxclz6p",
-				1,
-			)
-			tc.malleate(&pv)
-			err := pv.Validate()
+			voteStr := "1:1682899198:ETH:1810.4,4:1682899198:ETH:1808.5,1:1682899198:BTC:28110.45,4:1682899198:BTC:28108.25"
+			tc.malleate(&voteStr)
+			_, err := types.ParsePriceTuples(voteStr)
+			fmt.Println(err)
 			if tc.expectedErr == "" {
 				require.NoError(t, err)
 			} else {
@@ -45,4 +55,3 @@ func TestPrevoteValidate(t *testing.T) {
 		})
 	}
 }
-*/

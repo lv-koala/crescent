@@ -17,10 +17,10 @@ var (
 
 // Message types for the module
 const (
-	TypeMsgPrevote         = "prices_prevote"
-	TypeMsgVote            = "prices_vote"
+	TypeMsgPricesPrevote   = "prices_prevote"
+	TypeMsgPricesVote      = "prices_vote"
 	TypeMsgLsvFeederUpdate = "lsv_feeder_update"
-	TypeMsgAddNewSymbol    = "add_new_ticker"
+	TypeMsgAddNewTicker    = "add_new_ticker"
 )
 
 func NewMsgPricesPrevote(
@@ -32,7 +32,7 @@ func NewMsgPricesPrevote(
 }
 
 func (msg MsgPricesPrevote) Route() string { return RouterKey }
-func (msg MsgPricesPrevote) Type() string  { return TypeMsgPrevote }
+func (msg MsgPricesPrevote) Type() string  { return TypeMsgPricesPrevote }
 
 func (msg MsgPricesPrevote) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
@@ -83,7 +83,7 @@ func NewMsgPricesVote(
 }
 
 func (msg MsgPricesVote) Route() string { return RouterKey }
-func (msg MsgPricesVote) Type() string  { return TypeMsgVote }
+func (msg MsgPricesVote) Type() string  { return TypeMsgPricesVote }
 
 func (msg MsgPricesVote) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
@@ -116,7 +116,7 @@ func NewMsgLsvFeederUpdate(
 }
 
 func (msg MsgLsvFeederUpdate) Route() string { return RouterKey }
-func (msg MsgLsvFeederUpdate) Type() string  { return TypeMsgVote }
+func (msg MsgLsvFeederUpdate) Type() string  { return TypeMsgLsvFeederUpdate }
 
 func (msg MsgLsvFeederUpdate) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
@@ -142,7 +142,7 @@ func (msg MsgLsvFeederUpdate) ValidateBasic() error {
 }
 
 // Add new symbol
-func NewMsgAddNewSymbol(
+func NewMsgAddNewTicker(
 	delegateAddr string, ticker string) *MsgAddNewTicker {
 	return &MsgAddNewTicker{
 		DelegateAddress: delegateAddr,
@@ -151,7 +151,7 @@ func NewMsgAddNewSymbol(
 }
 
 func (msg MsgAddNewTicker) Route() string { return RouterKey }
-func (msg MsgAddNewTicker) Type() string  { return TypeMsgVote }
+func (msg MsgAddNewTicker) Type() string  { return TypeMsgAddNewTicker }
 
 func (msg MsgAddNewTicker) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
